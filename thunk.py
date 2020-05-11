@@ -26,10 +26,15 @@ def doit(shellcode, use_thread=True):
 	fpath = os.path.abspath(__file__)
 	fpath = os.path.dirname(fpath)
 	fpath = os.path.join(fpath, 'callbuf')
-	if platform.system() == 'Darwin':
+	system = platform.system()
+	if system == 'Darwin':
 		fpath = os.path.join(fpath, 'callbuf.dylib')
-	elif platform.system() == 'Windows':
+	elif system == 'Windows':
 		fpath = os.path.join(fpath, 'callbuf.dll')
+	elif system == 'Linux':
+		fpath = os.path.join(fpath, 'callbuf.so')
+	else:
+		raise Exception('unknown platform/system: %s' % system)
 
 	# load dll
 	print('THUNK: loading', fpath)

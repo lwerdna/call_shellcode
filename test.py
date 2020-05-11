@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import sys
 import platform
 
 import thunk
@@ -20,6 +21,23 @@ if platform.system() == 'Darwin':
 		b'\x48\x65\x6C\x6C\x6F\x2C\x20\x77\x6F\x72\x6C\x64\x21\x0A'
 
 	thunk.doit(hello_world_x64_macos)
+
+elif platform.system() == 'Linux':
+	thunk.doit(ret)
+	print('--------')
+
+	hello_world_x64_linux = \
+		b'\x48\x8d\x35\x1d\x00\x00\x00' + \
+		b'\xba\x0e\x00\x00\x00' + \
+		b'\xbf\x01\x00\x00\x00' + \
+		b'\xb8\x01\x00\x00\x00' + \
+		b'\x0f\x05' + \
+		b'\xc3\x00\x00\x00\x00' + \
+		b'\xb8\x3c\x00\x00\x00' + \
+		b'\x0f\x05' + \
+		b'\x48\x65\x6c\x6c\x6f\x2c\x20\x77\x6f\x72\x6c\x64\x21\x0a'
+
+	thunk.doit(hello_world_x64_linux)
 
 elif platform.system() == 'Windows':
 	thunk.doit(ret)
@@ -45,3 +63,4 @@ elif platform.system() == 'Windows':
 
 else:
 	raise Exception('unsupported: %s' % platform.system())
+
