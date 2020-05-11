@@ -5,6 +5,8 @@
 	#include <sys/stat.h>
 	#include <sys/types.h>
 	#include <unistd.h>
+
+	#include <stdio.h>
 #endif
 
 #if defined(OS_IS_WINDOWS)
@@ -15,8 +17,34 @@
 	#define MYNAME "callbuf.so"
 #endif
 
-#include <stdio.h>
 #include <string.h>
+#include <stdint.h>
+
+#if defined(OS_IS_WINDOWS)
+void printf(char * fmtstr, ...)
+{
+    DWORD dwRet;
+    CHAR buffer[1024];
+    va_list v1;
+    va_start(v1,fmtstr);
+    wvsprintf(buffer,fmtstr,v1);
+
+	int len = 0;
+	while(buffer[len] != '\0')
+		len++;
+
+    WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE), buffer, len, &dwRet, 0);
+    va_end(v1);
+}
+
+BOOL APIENTRY DllMain( HANDLE hModule, 
+                   DWORD  ul_reason_for_call, 
+                   LPVOID lpReserved
+                 )
+{
+    return TRUE;
+}
+#endif
 
 int doit(unsigned char *shellcode, int length)
 {
@@ -42,7 +70,8 @@ int doit(unsigned char *shellcode, int length)
 
 	/* copy to executable buffer */
 	printf(MYNAME ": memcpy()\n");
-	memcpy(buf_exec, shellcode, length);
+	for(int i=0; i<length; ++i)
+		buf_exec[i] = shellcode[i];
 
 	#ifdef OS_IS_WINDOWS
 	uint32_t oldProt;

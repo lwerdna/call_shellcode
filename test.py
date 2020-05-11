@@ -3,8 +3,13 @@
 import platform
 
 import thunk
+	
+ret = b'\xc3'
 
 if platform.system() == 'Darwin':
+	thunk.doit(ret)
+	print('--------')
+
 	hello_world_x64_macos = \
 		b'\x48\x8D\x35\x12\x00\x00\x00' + \
 		b'\xBA\x0E\x00\x00\x00' + \
@@ -15,5 +20,28 @@ if platform.system() == 'Darwin':
 		b'\x48\x65\x6C\x6C\x6F\x2C\x20\x77\x6F\x72\x6C\x64\x21\x0A'
 
 	thunk.doit(hello_world_x64_macos)
+
+elif platform.system() == 'Windows':
+	thunk.doit(ret)
+	print('--------')
+
+	# ensure we (host process) has messagebox functions loaded
+	import ctypes
+	MessageBoxA = ctypes.windll.user32.MessageBoxA
+	MessageBoxW = ctypes.windll.user32.MessageBoxW
+	MessageBoxA(None, b'MessageBoxA', b'MessageBoxA', 0)
+
+	hello_msgbox_x64_windows = \
+           b"\x31\xd2\xb2\x30\x64\x8b\x12\x8b\x52\x0c\x8b\x52\x1c\x8b\x42" + \
+		   b"\x08\x8b\x72\x20\x8b\x12\x80\x7e\x0c\x33\x75\xf2\x89\xc7\x03" + \
+		   b"\x78\x3c\x8b\x57\x78\x01\xc2\x8b\x7a\x20\x01\xc7\x31\xed\x8b" + \
+	       b"\x34\xaf\x01\xc6\x45\x81\x3e\x46\x61\x74\x61\x75\xf2\x81\x7e" + \
+		   b"\x08\x45\x78\x69\x74\x75\xe9\x8b\x7a\x24\x01\xc7\x66\x8b\x2c" + \
+		   b"\x6f\x8b\x7a\x1c\x01\xc7\x8b\x7c\xaf\xfc\x01\xc7\x68\x79\x74" + \
+           b"\x65\x01\x68\x6b\x65\x6e\x42\x68\x20\x42\x72\x6f\x89\xe1\xfe" + \
+		   b"\x49\x0b\x31\xc0\x51\x50\xff\xd7"
+
+	thunk.doit(hello_msgbox_x64_windows)
+
 else:
 	raise Exception('unsupported: %s' % platform.system())

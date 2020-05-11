@@ -8,4 +8,4 @@ def on_select(bv, start, length):
 	shellcode = bv.read(start, length)
 	thunk.doit(shellcode)
 
-PluginCommand.register_for_range('run shellcode', 'run selected code (dangerous!)', on_select)
+PluginCommand.register_for_range('call shellcode', 'call selected code (dangerous!)', on_select)

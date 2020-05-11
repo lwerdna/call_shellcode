@@ -7,12 +7,14 @@ import binascii
 import platform
 import threading
 
-from ctypes import *
+import ctypes
 
 def doit_worker(dll, shellcode):
 	dynamic_type = {'Darwin':'dylib', 'Windows':'dll', 'Linux':'so'}[platform.system()]
-	print('THUNK: calling to %s' % dynamic_type)
-	rc = dll.doit(c_char_p(shellcode), len(shellcode))
+	ccp = ctypes.c_char_p(shellcode)
+	scaddr = ctypes.cast(ccp, ctypes.c_void_p).value
+	print('THUNK: calling to %s.doit(0x%X, 0x%X)' % (dynamic_type, scaddr, len(shellcode)))
+	rc = dll.doit(ccp, len(shellcode))
 	print('THUNK: %s returned %d' % (dynamic_type, rc))
 
 def doit(shellcode, use_thread=True):
@@ -31,7 +33,7 @@ def doit(shellcode, use_thread=True):
 
 	# load dll
 	print('THUNK: loading', fpath)
-	dll = CDLL(fpath)
+	dll = ctypes.CDLL(fpath)
 
 	# call into dll
 	if use_thread:

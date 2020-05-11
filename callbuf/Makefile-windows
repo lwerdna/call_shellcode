@@ -1,10 +1,10 @@
 all: callbuf.dll
 
 callbuf.dll: callbuf.obj
-	link callbuf.obj dbgeng.lib /DLL /OUT:callbuf.dll
+	link /DLL /NODEFAULTLIB /ENTRY:DllMain callbuf.obj user32.lib kernel32.lib /EXPORT:doit /OUT:callbuf.dll
 
-callbuf.obj: callbuf.cpp
-	cl callbuf.cpp /DOS_IS_WINDOWS /c /O1 /EHsc /Fo:callbuf.obj
+callbuf.obj: callbuf.c
+	cl callbuf.c /DOS_IS_WINDOWS /c /GS- /Oi- /O1 /Fo:callbuf.obj
 
 clean:
 	del *.dll *.obj *.lib *.exp *.pdb
