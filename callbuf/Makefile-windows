@@ -1,0 +1,10 @@
+all: callbuf.dll
+
+callbuf.dll: callbuf.obj
+	link callbuf.obj dbgeng.lib /DLL /OUT:callbuf.dll
+
+callbuf.obj: callbuf.cpp
+	cl callbuf.cpp /DOS_IS_WINDOWS /c /O1 /EHsc /Fo:callbuf.obj
+
+clean:
+	del *.dll *.obj *.lib *.exp *.pdb
